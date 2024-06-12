@@ -3,15 +3,15 @@ import random
 import math
 import heapq
 
-# Инициализируем Pygame
+
 pygame.init()
 
-# Определим размеры экрана
+
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
 
-# Зададим цвета
+
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
 RED = (255, 0, 0)
@@ -21,7 +21,7 @@ BLUE = (0, 0, 255)
 # Размеры сетки для алгоритма поиска пути
 GRID_SIZE = 20
 
-# Определим класс автомобиля
+
 class Car:
     def __init__(self, x, y):
         self.x = x
@@ -55,7 +55,7 @@ class Car:
         self.x += self.speed * math.cos(math.radians(self.angle))
         self.y -= self.speed * math.sin(math.radians(self.angle))
 
-# Определим класс препятствия
+
 class Obstacle:
     def __init__(self, x, y, width, height):
         self.rect = pygame.Rect(x, y, width, height)
@@ -63,13 +63,13 @@ class Obstacle:
     def draw(self, screen):
         pygame.draw.rect(screen, GREEN, self.rect)
 
-# Случайная точка спавна и финиша
+
 car_spawn_x = random.randint(0, SCREEN_WIDTH - 50)
 car_spawn_y = random.randint(0, SCREEN_HEIGHT - 50)
 destination_x = random.randint(0, SCREEN_WIDTH)
 destination_y = random.randint(0, SCREEN_HEIGHT)
 
-# Создадим автомобиль
+
 car = Car(car_spawn_x, car_spawn_y)
 
 # Создадим список препятствий
@@ -131,7 +131,7 @@ def a_star(start, goal, obstacles):
 
     return []
 
-# Основной цикл программы
+
 running = True
 clock = pygame.time.Clock()
 
@@ -143,16 +143,16 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-    # Обновим состояние автомобиля
+   
     car.update()
 
-    # Очистим экран
+    
     screen.fill(WHITE)
 
-    # Нарисуем стартовую точку
+   
     pygame.draw.circle(screen, BLACK, (car_spawn_x, car_spawn_y), 10)
 
-    # Нарисуем цель
+   
     pygame.draw.circle(screen, BLUE, (destination_x, destination_y), 10)
 
     # Нарисуем путь, если он содержит 2 или более точек
@@ -163,10 +163,10 @@ while running:
     for obstacle in obstacles:
         obstacle.draw(screen)
 
-    # Нарисуем автомобиль
+  
     car_rect = car.draw(screen)
 
-    # Обновим экран
+
     pygame.display.flip()
 
     # Ограничим FPS
