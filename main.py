@@ -3,14 +3,11 @@ import random
 import math
 import heapq
 
-
 pygame.init()
-
 
 SCREEN_WIDTH = 800
 SCREEN_HEIGHT = 600
 screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-
 
 WHITE = (255, 255, 255)
 BLACK = (0, 0, 0)
@@ -20,7 +17,6 @@ BLUE = (0, 0, 255)
 
 # Размеры сетки для алгоритма поиска пути
 GRID_SIZE = 20
-
 
 class Car:
     def __init__(self, x, y):
@@ -42,12 +38,6 @@ class Car:
         pygame.draw.rect(screen, RED, car_rect)
         return car_rect
 
-    def set_speed(self, speed):
-        self.speed = speed
-
-    def set_angle(self, angle):
-        self.angle = angle
-
     def move_towards(self, target_x, target_y):
         dx = target_x - self.x
         dy = target_y - self.y
@@ -55,30 +45,33 @@ class Car:
         self.x += self.speed * math.cos(math.radians(self.angle))
         self.y -= self.speed * math.sin(math.radians(self.angle))
 
-
 class Obstacle:
-    def __init__(self, x, y, width, height):
+    def __init__(self, x, y, width, height, speed):
         self.rect = pygame.Rect(x, y, width, height)
+        self.speed = speed
+        self.direction = random.choice([-1, 1])
+
+    def update(self):
+        self.rect.x += self.speed * self.direction
+        if self.rect.left < 0 or self.rect.right > SCREEN_WIDTH:
+            self.direction *= -1
 
     def draw(self, screen):
         pygame.draw.rect(screen, GREEN, self.rect)
-
 
 car_spawn_x = random.randint(0, SCREEN_WIDTH - 50)
 car_spawn_y = random.randint(0, SCREEN_HEIGHT - 50)
 destination_x = random.randint(0, SCREEN_WIDTH)
 destination_y = random.randint(0, SCREEN_HEIGHT)
 
-
 car = Car(car_spawn_x, car_spawn_y)
 
 # Создадим список препятствий
 obstacles = []
-
 for _ in range(10):
     x = random.randint(0, SCREEN_WIDTH - 50)
     y = random.randint(0, SCREEN_HEIGHT - 50)
-    obstacles.append(Obstacle(x, y, 50, 50))
+    obstacles.append(Obstacle(x, y, 50, 50, random.choice([1, 2])))
 
 # Функция для поиска пути с использованием A*
 def a_star(start, goal, obstacles):
@@ -131,7 +124,6 @@ def a_star(start, goal, obstacles):
 
     return []
 
-
 running = True
 clock = pygame.time.Clock()
 
@@ -143,33 +135,30 @@ while running:
         if event.type == pygame.QUIT:
             running = False
 
-   
+    # Обновляем положение препятствий
+    for obstacle in obstacles:
+        obstacle.update()
+
+    # Обновляем путь, если препятствия изменили положение
+    car.path = a_star((car.x, car.y), (destination_x, destination_y), obstacles)
+
     car.update()
 
-    
     screen.fill(WHITE)
 
-   
     pygame.draw.circle(screen, BLACK, (car_spawn_x, car_spawn_y), 10)
-
-   
     pygame.draw.circle(screen, BLUE, (destination_x, destination_y), 10)
 
-    # Нарисуем путь, если он содержит 2 или более точек
     if len(car.path) > 1:
         pygame.draw.lines(screen, BLACK, False, [(int(x), int(y)) for x, y in car.path], 2)
 
-    # Нарисуем препятствия
     for obstacle in obstacles:
         obstacle.draw(screen)
 
-  
-    car_rect = car.draw(screen)
-
+    car.draw(screen)
 
     pygame.display.flip()
 
-    # Ограничим FPS
     clock.tick(60)
 
 pygame.quit()
