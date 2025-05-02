@@ -22,7 +22,7 @@
     ```
 3. Скачайте или клонируйте репозиторий:
     ```bash
-    git clone https://github.com/aletonfdg/a-star-car-simulation.git
+    git clone https://github.com/aletonfdg/algorithm-A-python.git
     cd a-star-car-simulation
     ```
 4. Запустите программу:
